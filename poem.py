@@ -14,7 +14,9 @@ while True:
 	if(divs):
 		lines = divs.find_all("div")
 		break
-
-print "\t\t"+title.text+" "+poet.text.lstrip(" ")
+poet = poet.text.lstrip("\n")
+poet = poet.lstrip(" ")
+print "\t\t\t\t\t"+title.text+" \n\t\t\t\t\t\t\t-"+poet
+print "\n"
 for line in lines:
-	print line.text
+	print "\t\t\t\t\t"+line.text
