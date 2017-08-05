@@ -1,7 +1,7 @@
 # ozymandias
 Read a random poem from the command line. Scrapped from https://www.poetryfoundation.org.
 
-##Requirements
+## Requirements
 1. [bs4](https://pypi.python.org/pypi/beautifulsoup4)
 
 ## Run instructions
