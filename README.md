@@ -12,4 +12,4 @@ Read a random poem from the command line. Scrapped from https://www.poetryfounda
 - [ ] Store previous seeds
 
 
-Inspired by the evil David from Alien Convenant movie who says,"Look on my Works, ye Mighty, and despair!".
+Inspired by the evil Android David from Alien Convenant movie who says,"Look on my Works, ye Mighty, and despair!".
