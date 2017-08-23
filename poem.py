@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 from urllib import urlopen
+import bs4
 from bs4 import BeautifulSoup as bs
 import random
 import json
@@ -8,7 +9,7 @@ import json
 SET_SEED = True
 args = sys.argv
 history = json.loads(open("seeds.json").read())
-seed = 0
+page_no = 0
 
 #From seed history
 if "-p" in args:
@@ -19,13 +20,15 @@ if "-p" in args:
 
 while True:
 	if SET_SEED:
-		seed = random.randint(43100,50000)
-	page = urlopen("https://www.poetryfoundation.org/poems/"+str(seed))
+		page_no = random.randint(1,10)
+	#proxies = {'http': PROXY_IP:PORT_NO}
+	page = urllib.urlopen('https://allpoetry.com/classics/famous_poems?page='+str(page_no))
 	page_content = page.read()
 	page_content = bs(page_content,"html.parser")
-	divs = page_content.find("div", {"class":"o-poem"})
-	title = page_content.find("h3", {"class":"c-hdgSans c-hdgSans_5 c-mix-hdgSans_blocked"})
-	poet = page_content.find("span", {"class":"c-txt c-txt_attribution"})
+	divs = page_content.find_all("div", {"class":"details"})
+	poem_index = random.randint(0,len(divs)-1)
+	poem_link = (divs[poem_index].contents)[0].attrs['href']
+	page = urllib.urlopen('https://allpoetry.com'+poem_link)
 	if(divs):
 		lines = divs.find_all("div")
 		if SET_SEED:
