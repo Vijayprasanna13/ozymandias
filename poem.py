@@ -8,6 +8,7 @@ import json
 
 args = sys.argv
 history = json.loads(open("seeds.json").read())
+DEBUG = False
 
 def is_valid_line(line):
 	if type(line) == bs4.element.NavigableString:
@@ -19,17 +20,25 @@ def get_poem():
 	while PASS:
 		page_no = random.randint(1,10)
 		page = urllib.urlopen('https://allpoetry.com/classics/famous_poems?page='+str(page_no))
+		
 		page_content = page.read()
 		page_content = bs(page_content,"html.parser")
 		divs = page_content.find_all("div", {"class":"details"})
+			
 		poem_index = random.randint(0,len(divs)-1)
 		poem_link = (divs[poem_index].contents)[0].attrs['href']
 		poem_page = urllib.urlopen('https://allpoetry.com'+poem_link)
+		
 		poem_page_content = poem_page.read();
 		poem_page_content = bs(poem_page_content,"html.parser")
 		lines = poem_page_content.find('div',{'class':'preview poem_body'})
+		if DEBUG:
+			print 'https://allpoetry.com/classics/famous_poems?page='+str(page_no)
+			print divs
+			print 'https://allpoetry.com'+poem_link
 		if len(lines) != 0:
 			PASS = False		
+	
 	title = ((poem_page_content.find('h1',{'class':'title'})).contents)[0].contents
 	poet = ((poem_page_content.find('span',{'class':'n'})).contents)[0].contents
 	del lines[-1]
@@ -37,16 +46,36 @@ def get_poem():
 	for line in lines:
 		if is_valid_line(line):
 			poem.append(line)
+
+	if len(poem) == 0:
+		lines = (lines.find('p')).contents
+		for line in lines:
+			if is_valid_line(line):
+				poem.append(line)
+
 	return title, poet, poem
 
-def print_poem(title, poet, poem):
+def print_poem(title, poet, poem, options):
 	print title[0]
 	print " - By "+poet[0]
-	for line in poem:
-		print line
+
+	_line_limit = len(poem) if options['line_limit'] == None else options['line_limit']
+	
+	for i in range(0,min(len(poem), _line_limit)):
+		print poem[i]
+
+options = {}
+
+#line control
+if "-l" in args:
+	_lIndex = args.index("-l")
+	_lLimit = int(args[_lIndex + 1])
+	options['line_limit'] = _lLimit
+else:
+	options['line_limit'] = None
 
 title, poet, poem = get_poem()
-print_poem(title, poet, poem)
+print_poem(title, poet, poem, options)
 
 # get_poem()
 
