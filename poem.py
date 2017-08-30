@@ -7,17 +7,27 @@ import random
 import json
 
 args = sys.argv
-history = json.loads(open("seeds.json").read())
 DEBUG = False
+
+
+def add_to_history(poem_link):
+	history = json.loads(open("history.json").read())
+	print history
+	fs = open('history.json','rw+')
+	history.append({"peom_link":poem_link})
+	fs.write(json.dumps(history))
+	fs.close()
 
 def is_valid_line(line):
 	if type(line) == bs4.element.NavigableString:
 		return True
 	return False
 
-def get_poem():
+def get_poem(use_history = False):
 	PASS = True
 	while PASS:
+		if use_history:
+
 		page_no = random.randint(1,10)
 		page = urllib.urlopen('https://allpoetry.com/classics/famous_poems?page='+str(page_no))
 		
@@ -35,7 +45,7 @@ def get_poem():
 		if DEBUG:
 			print 'https://allpoetry.com/classics/famous_poems?page='+str(page_no)
 			print divs
-			print 'https://allpoetry.com'+poem_link
+			#print 'https://allpoetry.com'+poem_link
 		if len(lines) != 0:
 			PASS = False		
 	
@@ -52,7 +62,7 @@ def get_poem():
 		for line in lines:
 			if is_valid_line(line):
 				poem.append(line)
-
+	add_to_history(poem_link)
 	return title, poet, poem
 
 def print_poem(title, poet, poem, options):
@@ -68,14 +78,22 @@ options = {}
 
 #line control
 if "-l" in args:
-	_lIndex = args.index("-l")
-	_lLimit = int(args[_lIndex + 1])
-	options['line_limit'] = _lLimit
+	_l_index = args.index("-l")
+	_l_limit = int(args[_l_index + 1])
+	options['line_limit'] = _l_limit
 else:
 	options['line_limit'] = None
 
+#history
+if "-h" in args:
+	_h_index = args.index("-h")
+	_h_val = int(args[_h_index + 1])
+	options['history'] = _h_val
+else:
+	options['history'] = None
+
 title, poet, poem = get_poem()
-print_poem(title, poet, poem, options)
+#print_poem(title, poet, poem, options)
 
 # get_poem()
 
