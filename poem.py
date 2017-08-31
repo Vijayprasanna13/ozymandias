@@ -12,7 +12,7 @@ DEBUG = False
 
 def add_to_history(poem_link):
 	history = json.loads(open("history.json").read())
-	print history
+	#print history
 	fs = open('history.json','rw+')
 	history.append({"peom_link":poem_link})
 	fs.write(json.dumps(history))
@@ -26,28 +26,27 @@ def is_valid_line(line):
 def get_poem(use_history = False):
 	PASS = True
 	while PASS:
-		if use_history:
-
-		page_no = random.randint(1,10)
-		page = urllib.urlopen('https://allpoetry.com/classics/famous_poems?page='+str(page_no))
-		
-		page_content = page.read()
-		page_content = bs(page_content,"html.parser")
-		divs = page_content.find_all("div", {"class":"details"})
+		if not use_history:
+			page_no = random.randint(1,10)
+			page = urllib.urlopen('https://allpoetry.com/classics/famous_poems?page='+str(page_no))
 			
-		poem_index = random.randint(0,len(divs)-1)
-		poem_link = (divs[poem_index].contents)[0].attrs['href']
-		poem_page = urllib.urlopen('https://allpoetry.com'+poem_link)
-		
-		poem_page_content = poem_page.read();
-		poem_page_content = bs(poem_page_content,"html.parser")
-		lines = poem_page_content.find('div',{'class':'preview poem_body'})
-		if DEBUG:
-			print 'https://allpoetry.com/classics/famous_poems?page='+str(page_no)
-			print divs
-			#print 'https://allpoetry.com'+poem_link
-		if len(lines) != 0:
-			PASS = False		
+			page_content = page.read()
+			page_content = bs(page_content,"html.parser")
+			divs = page_content.find_all("div", {"class":"details"})
+				
+			poem_index = random.randint(0,len(divs)-1)
+			poem_link = (divs[poem_index].contents)[0].attrs['href']
+			poem_page = urllib.urlopen('https://allpoetry.com'+poem_link)
+			
+			poem_page_content = poem_page.read();
+			poem_page_content = bs(poem_page_content,"html.parser")
+			lines = poem_page_content.find('div',{'class':'preview poem_body'})
+			if DEBUG:
+				print 'https://allpoetry.com/classics/famous_poems?page='+str(page_no)
+				print divs
+				#print 'https://allpoetry.com'+poem_link
+			if len(lines) != 0:
+				PASS = False		
 	
 	title = ((poem_page_content.find('h1',{'class':'title'})).contents)[0].contents
 	poet = ((poem_page_content.find('span',{'class':'n'})).contents)[0].contents
@@ -93,7 +92,7 @@ else:
 	options['history'] = None
 
 title, poet, poem = get_poem()
-#print_poem(title, poet, poem, options)
+print_poem(title, poet, poem, options)
 
 # get_poem()
 
